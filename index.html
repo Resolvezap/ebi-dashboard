@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dashboard EBI – RJ</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f2f8;color:#222}
+header{background:linear-gradient(135deg,#1a3a5c 0%,#2d6fa3 100%);color:#fff;padding:16px 28px;display:flex;align-items:center;gap:16px}
+header .ccb-logo{flex-shrink:0}
+header h1{font-size:1.4rem;font-weight:700;line-height:1.2}
+header p{font-size:.85rem;opacity:.8;margin-top:3px}
+header .spacer{flex:1}
+.btn-print{background:#fff;color:#1a3a5c;border:none;border-radius:8px;padding:9px 18px;font-size:.82rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;box-shadow:0 2px 6px rgba(0,0,0,.15);transition:background .2s}
+.btn-print:hover{background:#e8f0f8}
+.filter-bar{background:#fff;padding:12px 28px;border-bottom:2px solid #e0e6ef;display:flex;align-items:center;gap:8px;flex-wrap:wrap;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.filter-bar label{font-size:.8rem;font-weight:600;color:#555;margin-right:4px;white-space:nowrap}
+.tab{padding:7px 16px;border:2px solid #2d6fa3;border-radius:20px;background:#fff;color:#2d6fa3;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap}
+.tab:hover{background:#e8f0f8}
+.tab.active{background:#2d6fa3;color:#fff}
+.main{padding:20px 28px;max-width:1400px;margin:0 auto}
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin-bottom:24px}
+.kpi{background:#fff;border-radius:12px;padding:18px 20px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.06);border-top:4px solid #2d6fa3}
+.kpi.green{border-top-color:#27ae60}.kpi.orange{border-top-color:#e67e22}.kpi.purple{border-top-color:#8e44ad}.kpi.red{border-top-color:#e74c3c}.kpi.teal{border-top-color:#16a085}
+.kpi .num{font-size:2.2rem;font-weight:700;color:#1a3a5c}
+.kpi .lbl{font-size:.72rem;color:#666;margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
+.section{margin-bottom:28px}
+.section-title{font-size:1rem;font-weight:700;color:#1a3a5c;margin-bottom:14px;padding-bottom:6px;border-bottom:2px solid #d0dce8;display:flex;align-items:center;gap:8px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:16px}
+.gap{height:14px}
+@media(max-width:1100px){.g4{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.g4,.g3,.g2{grid-template-columns:1fr}}
+.card{background:#fff;border-radius:12px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.card h3{font-size:.78rem;font-weight:700;color:#444;margin-bottom:12px;text-transform:uppercase;letter-spacing:.4px}
+.wrap{position:relative}.h200{height:200px}.h240{height:240px}.h160{height:160px}
+footer{text-align:center;font-size:.75rem;color:#888;padding:24px;margin-top:20px}
+@media print{
+  .filter-bar,.btn-print{display:none!important}
+  header{background:#1a3a5c!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .main{padding:10px!important}
+  .card{box-shadow:none!important;border:1px solid #ddd}
+  body{background:#fff!important}
+  .section{page-break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="ccb-logo">
+    <svg width="68" height="68" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="display:block">
+      <rect x="4" y="4" width="192" height="192" rx="6" fill="none" stroke="#fff" stroke-width="3.5"/>
+      <rect x="10" y="10" width="180" height="180" rx="3" fill="none" stroke="#fff" stroke-width="1.2"/>
+      <path d="M4,30 Q4,4 30,4" fill="none" stroke="#fff" stroke-width="3"/>
+      <path d="M170,4 Q196,4 196,30" fill="none" stroke="#fff" stroke-width="3"/>
+      <path d="M196,170 Q196,196 170,196" fill="none" stroke="#fff" stroke-width="3"/>
+      <path d="M30,196 Q4,196 4,170" fill="none" stroke="#fff" stroke-width="3"/>
+      <rect x="22" y="18" width="156" height="52" rx="2" fill="none" stroke="#fff" stroke-width="1.2"/>
+      <text x="100" y="57" text-anchor="middle" fill="#fff" font-family="Georgia,serif" font-size="36" font-weight="bold" letter-spacing="4">CCB</text>
+      <line x1="22" y1="76" x2="178" y2="76" stroke="#fff" stroke-width="1.2"/>
+      <text x="100" y="108" text-anchor="middle" fill="#fff" font-family="Georgia,serif" font-size="17" font-weight="bold">CONGREGAÇÃO</text>
+      <text x="100" y="130" text-anchor="middle" fill="#fff" font-family="Georgia,serif" font-size="17" font-weight="bold">CRISTÃ</text>
+      <text x="100" y="152" text-anchor="middle" fill="#fff" font-family="Georgia,serif" font-size="17" font-weight="bold">NO BRASIL</text>
+      <line x1="22" y1="164" x2="178" y2="164" stroke="#fff" stroke-width="1.2"/>
+      <path d="M60,172 Q100,185 140,172" fill="none" stroke="#fff" stroke-width="2"/>
+    </svg>
+  </div>
+  <div>
+    <h1>Sondagem EBI – Espaço Bíblico Infantil</h1>
+    <p>Regional RJ &nbsp;·&nbsp; 87 respostas &nbsp;·&nbsp; Junho 2026</p>
+  </div>
+  <div class="spacer"></div>
+  <button class="btn-print" onclick="window.print()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+    Imprimir
+  </button>
+</header>
+
+<div class="filter-bar">
+  <label>Regional:</label>
+  <button class="tab active" data-r="Geral">🌐 Geral</button>
+  <button class="tab" data-r="Duque de Caxias">Duque de Caxias</button>
+  <button class="tab" data-r="Nova Friburgo">Nova Friburgo</button>
+  <button class="tab" data-r="Macaé">Macaé</button>
+  <button class="tab" data-r="Nova Iguaçu">Nova Iguaçu</button>
+  <button class="tab" data-r="Itaperuna">Itaperuna</button>
+  <button class="tab" data-r="São Gonçalo">São Gonçalo</button>
+  <button class="tab" data-r="Angra dos Reis">Angra dos Reis</button>
+</div>
+
+<div class="main">
+
+  <div class="kpi-row">
+    <div class="kpi"><div class="num" id="k-total">–</div><div class="lbl">Respostas</div></div>
+    <div class="kpi green"><div class="num" id="k-igrejas">–</div><div class="lbl">Casas de Oração</div></div>
+    <div class="kpi orange"><div class="num" id="k-veu">–</div><div class="lbl">Usam Véu (%)</div></div>
+    <div class="kpi purple"><div class="num" id="k-porta">–</div><div class="lbl">Colabra. na Porta (%)</div></div>
+    <div class="kpi red"><div class="num" id="k-brigadista">–</div><div class="lbl">Brigadista Presente (%)</div></div>
+    <div class="kpi teal"><div class="num" id="k-reunioes">–</div><div class="lbl">Reuniões de Equipe (%)</div></div>
+  </div>
+
+  <!-- Distribuição Regional -->
+  <div class="section" id="sec-reg">
+    <div class="section-title"><span>🗺️</span> Distribuição por Regional</div>
+    <div class="g2">
+      <div class="card"><h3>Respostas por Regional</h3><div id="ch-reg-bar" class="wrap h200"></div></div>
+      <div class="card"><h3>Participação Percentual</h3><div id="ch-reg-pie" class="wrap h200"></div></div>
+    </div>
+  </div>
+
+  <!-- Operação -->
+  <div class="section">
+    <div class="section-title"><span>⚙️</span> Operação do EBI</div>
+    <div class="g4">
+      <div class="card"><h3>Dia de Culto</h3><div id="ch-dia" class="wrap h200"></div></div>
+      <div class="card"><h3>Crianças por Reunião</h3><div id="ch-criancas" class="wrap h200"></div></div>
+      <div class="card"><h3>Colaboradoras por Reunião</h3><div id="ch-colab" class="wrap h200"></div></div>
+      <div class="card"><h3>Irmã Brigadista na RPC</h3><div id="ch-brigadista" class="wrap h200"></div></div>
+    </div>
+    <div class="gap"></div>
+    <div class="g3">
+      <div class="card"><h3>Nº de Coordenadoras</h3><div id="ch-coord" class="wrap h240"></div></div>
+      <div class="card"><h3>Total de Colaboradoras</h3><div id="ch-tot-colab" class="wrap h240"></div></div>
+      <div class="card"><h3>Estratégias em Cultos Especiais</h3><div id="ch-estrat" class="wrap h240"></div></div>
+    </div>
+  </div>
+
+  <!-- Segurança -->
+  <div class="section">
+    <div class="section-title"><span>🔒</span> Segurança &amp; Controle</div>
+    <div class="g4">
+      <div class="card"><h3>Colaboradora Exclusiva na Porta</h3><div id="ch-porta" class="wrap h200"></div></div>
+      <div class="card"><h3>Identificação Adicional (Crachá/Pulseira)</h3><div id="ch-identif" class="wrap h200"></div></div>
+      <div class="card"><h3>Banheiro no Ambiente</h3><div id="ch-banheiro" class="wrap h200"></div></div>
+      <div class="card"><h3>Acesso por Escadas</h3><div id="ch-escadas" class="wrap h200"></div></div>
+    </div>
+    <div class="gap"></div>
+    <div class="g2">
+      <div class="card"><h3>Itens de Segurança Presentes</h3><div id="ch-seguranca" class="wrap h240"></div></div>
+      <div class="card"><h3>O Espaço Possui</h3><div id="ch-espaco" class="wrap h240"></div></div>
+    </div>
+  </div>
+
+  <!-- Liturgia -->
+  <div class="section">
+    <div class="section-title"><span>🙏</span> Liturgia &amp; Padronização da RPC</div>
+    <div class="g4">
+      <div class="card"><h3>Saudação na Porta</h3><div id="ch-saudacao" class="wrap h200"></div></div>
+      <div class="card"><h3>Frase de Abertura da RPC</h3><div id="ch-abertura" class="wrap h200"></div></div>
+      <div class="card"><h3>Ritual Completo da RPC</h3><div id="ch-ritual" class="wrap h200"></div></div>
+      <div class="card"><h3>Vigilância na Oração</h3><div id="ch-vigilancia" class="wrap h200"></div></div>
+    </div>
+    <div class="gap"></div>
+    <div class="g2">
+      <div class="card"><h3>Uso do Véu (início ao fim da RPC)</h3><div id="ch-veu" class="wrap h160"></div></div>
+      <div class="card"><h3>Banner (Combinados / Pai Nosso)</h3><div id="ch-banner" class="wrap h160"></div></div>
+    </div>
+  </div>
+
+  <!-- Gestão -->
+  <div class="section">
+    <div class="section-title"><span>📋</span> Gestão &amp; Equipe</div>
+    <div class="g4">
+      <div class="card"><h3>Reuniões Bimestrais/Trimestrais</h3><div id="ch-reunioes" class="wrap h200"></div></div>
+      <div class="card"><h3>Rotatividade de Colaboradoras</h3><div id="ch-rotativ" class="wrap h200"></div></div>
+      <div class="card"><h3>Apoio do Ministério ao EBI</h3><div id="ch-minist" class="wrap h200"></div></div>
+      <div class="card"><h3>Drive / Acervo Digital</h3><div id="ch-drive" class="wrap h200"></div></div>
+    </div>
+    <div class="gap"></div>
+    <div class="g2">
+      <div class="card"><h3>Cronograma de Histórias</h3><div id="ch-cronograma" class="wrap h200"></div></div>
+      <div class="card"><h3>Revisão das Histórias</h3><div id="ch-revisao" class="wrap h200"></div></div>
+    </div>
+  </div>
+
+  <!-- Material -->
+  <div class="section">
+    <div class="section-title"><span>🎨</span> Material Didático</div>
+    <div class="g4">
+      <div class="card"><h3>Ajuda na Compra de Materiais</h3><div id="ch-compra" class="wrap h200"></div></div>
+      <div class="card"><h3>Recursos Gráficos Utilizados</h3><div id="ch-graficos" class="wrap h200"></div></div>
+      <div class="card"><h3>Uso de Vídeos Bíblicos</h3><div id="ch-videos" class="wrap h200"></div></div>
+      <div class="card"><h3>Uso de IA (Inteligência Artificial)</h3><div id="ch-ia" class="wrap h200"></div></div>
+    </div>
+    <div class="gap"></div>
+    <div class="g2">
+      <div class="card"><h3>Materiais Utilizados nas Atividades</h3><div id="ch-materiais" class="wrap h200"></div></div>
+      <div class="card"><h3>Temas Relativos a Datas Comemorativas</h3><div id="ch-datas" class="wrap h200"></div></div>
+    </div>
+    <div class="gap"></div>
+    <div class="g2">
+      <div class="card"><h3>EBI Ensina Temas sobre a Organização da Igreja</h3><div id="ch-temas-igreja" class="wrap h160"></div></div>
+      <div class="card"><h3>Orientação sobre Conduta das Colaboradoras</h3><div id="ch-conduta" class="wrap h160"></div></div>
+    </div>
+  </div>
+
+  <!-- Inclusão -->
+  <div class="section">
+    <div class="section-title"><span>♿</span> Inclusão &amp; Acessibilidade</div>
+    <div class="g4">
+      <div class="card"><h3>Treinamento em Inclusão</h3><div id="ch-trein" class="wrap h200"></div></div>
+      <div class="card"><h3>Preparado para TEA/TDAH</h3><div id="ch-tea" class="wrap h200"></div></div>
+      <div class="card"><h3>Sinalização Acessível</h3><div id="ch-sinal" class="wrap h200"></div></div>
+      <div class="card"><h3>Materiais Pedagógicos Acessíveis</h3><div id="ch-matped" class="wrap h200"></div></div>
+    </div>
+    <div class="gap"></div>
+    <div class="g4">
+      <div class="card"><h3>Incentivo ao Respeito às Diferenças</h3><div id="ch-respeito" class="wrap h200"></div></div>
+      <div class="card"><h3>Identificam Sobrecarga Sensorial</h3><div id="ch-sobrecarga" class="wrap h200"></div></div>
+      <div class="card"><h3>Irmãs Disponíveis para Suporte</h3><div id="ch-suporte" class="wrap h200"></div></div>
+      <div class="card"><h3>Recursos para Def. Auditiva</h3><div id="ch-auditiva" class="wrap h200"></div></div>
+    </div>
+    <div class="gap"></div>
+    <div class="g2">
+      <div class="card"><h3>Paredes Claras (sem excesso de material)</h3><div id="ch-paredes" class="wrap h160"></div></div>
+      <div class="card"><h3>Encontros Coletivos para Preparo</h3><div id="ch-encontros" class="wrap h160"></div></div>
+    </div>
+    <div class="gap"></div>
+    <div class="g4">
+      <div class="card"><h3>Local de Regulação Emocional</h3><div id="ch-regulacao" class="wrap h200"></div></div>
+      <div class="card"><h3>Responsável Legal Permanece no EBI</h3><div id="ch-resp-legal" class="wrap h200"></div></div>
+      <div class="card"><h3>Atividades de Acordo com a Faixa Etária</h3><div id="ch-faixa" class="wrap h200"></div></div>
+      <div class="card"><h3>Espaço Compartilhado com Outro Grupo</h3><div id="ch-espaco-div" class="wrap h200"></div></div>
+    </div>
+    <div class="gap"></div>
+    <div class="g2">
+      <div class="card"><h3>Qtd. de Crianças Atípicas no EBI</h3><div id="ch-atipicas" class="wrap h200"></div></div>
+      <div class="card"><h3>Frequência das Crianças Atípicas</h3><div id="ch-freq-atip" class="wrap h200"></div></div>
+    </div>
+  </div>
+
+</div>
+<footer>Dashboard EBI – Sondagem para Alinhamento e Padronização &nbsp;·&nbsp; Regional RJ &nbsp;·&nbsp; Junho 2026 &nbsp;·&nbsp; 87 respostas</footer>
+
+<script>
+const D = {
+  "Duque de Caxias": {
+    "total":34,
+    "igrejas":34,
+    "brigadista":{"Não": 27, "Sim": 7},
+    "banheiro":{"Usa banheiro da igreja": 5, "Sim": 11, "Não": 18},
+    "colaboradora_porta":{"Não": 12, "Sim": 22},
+    "identificacao_adicional":{"Não": 14, "Sim": 20},
+    "reunioes_equipe":{"Sim": 24, "Não": 10},
+    "rotatividade":{"Sim": 31, "Não": 3},
+    "apoio_ministerio":{"Sim": 28, "Não": 5, "O ministério faz parte do grupo no whatsapp, e vai na ebi fazer oração juntamente das colaboradora em alguns domingos.": 1},
+    "drive":{"Não": 18, "Sim": 16},
+    "saudacao_porta":{"Sim": 34},
+    "inicio_rpc_frase":{"Sim": 34},
+    "ritual_rpc":{"Sim": 30, "Não": 4},
+    "vigilancia_oracao":{"Sim": 34},
+    "veu":{"Sim": 33, "Não": 1},
+    "ajuda_compra":{"Não": 24, "Sim": 10},
+    "paredes_claras":{"Sim": 31, "Não": 3},
+    "videos":{"Não": 34},
+    "ia":{"Sim (atividades)": 12, "Não": 22},
+    "datas_comemorativas":{"Não (só bíblicos)": 25, "Às vezes": 7, "Sim": 2},
+    "temas_igreja":{"Às vezes": 28, "Sim": 2, "Não": 3, "Sempre": 1},
+    "orientacao_conduta":{"Sim": 30, "Não": 4},
+    "treinamento_inclusao":{"Não": 23, "Sim": 11},
+    "prep_tea":{"Não": 14, "Sim": 10, "Em processo": 10},
+    "sinalizacao":{"Não": 18, "Sim": 14, "Em processo": 2},
+    "local_regulacao":{"Não": 27, "Sim": 7},
+    "mat_pedagogicos":{"Não": 24, "Sim": 10},
+    "incentivo_respeito":{"Sempre": 31, "Às vezes": 1, "Não": 1, "Sim": 1},
+    "identif_sobrecarga":{"Algumas irmãs": 12, "Não": 11, "Sim": 11},
+    "irmas_suporte":{"Não sabia": 3, "Não": 18, "Sim": 13},
+    "def_auditiva":{"Parcialmente": 2, "Não": 29, "Sim": 3},
+    "resp_legal":{"Não": 19, "Sim": 8, "Às vezes": 7},
+    "revisao_historias":{"Só coordenadoras": 12, "Coord. + Ministério": 20, "Não": 2},
+    "atividades_faixa":{"Sempre": 30, "Às vezes": 4},
+    "encontros_preparo":{"Às vezes": 8, "Não": 20, "Sempre": 5, "Quinzenal": 1},
+    "seguranca":{"Extintor": 12, "Janelas c/ tela/grade": 17, "Tomadas tamponadas": 6, "Portas de vidro c/ faixas": 5, "Luz de emergência": 12},
+    "espaco_possui":{"Ar condicionado": 26, "Ventilador": 24, "Placa JC": 27, "Tatame": 18, "Câmera": 1},
+    "estrategias_especiais":{"↑ colaboradoras": 21, "Dinâmicas": 10, "Outras": 5, "↑ ativ. escritas": 11},
+    "materiais":{"Papelaria": 34, "Massinha": 15, "Sementes/grãos": 3, "Outros": 1},
+    "escadas":{"c/ corrimão": 8, "S/ segurança": 6, "c/ piso antiderrap.": 5, "Sem escadas": 19, "c/ fita antiderrap.": 2},
+    "qtd_colaboradoras":{"2 a 3": 15, "1 a 2": 16, "6 ou mais": 2, "4 a 5": 1},
+    "qtd_criancas":{"5 a 8": 14, "8 a 15": 15, "15 a 20": 5},
+    "qtd_coordenadoras":{"2  coordenadoras gerais": 7, "Acima de 4": 14, "1 coordenadora": 11, "Ainda não há coordenadora": 2},
+    "total_colaboradoras":{"5 a 10": 15, "10 a 15": 5, "2 a 5": 13, "15 a 20": 1},
+    "dia_culto":{"Domingo Noite": 18, "Sábado Noite": 13, "2° feira - Noite": 2, "Domingo Tarde": 1},
+    "recursos_graficos":{"Personagens contemp.": 13, "Outros": 21},
+    "banner":{"Só combinados": 5, "Não": 25, "Só Pai Nosso": 2, "Sim, os dois": 2},
+    "cronograma":{"Bimestral/Trimestral": 3, "Por grupo": 11, "Outro": 5, "Mensal": 13, "Semestral/Anual": 2},
+    "espaco_dividido":{"Não": 24, "Sim": 10},
+    "atipicas":{"1": 10, "3 ou mais": 8, "2": 9, "Nenhuma": 7},
+    "freq_atipicas":{"Às vezes": 12, "Raramente": 10, "Sempre": 12}
+  },
+  "Nova Friburgo": {
+    "total":20,
+    "igrejas":20,
+    "brigadista":{"Não": 17, "Às vezes": 1, "Sim": 2},
+    "banheiro":{"Sim": 13, "Não": 2, "Usa banheiro da igreja": 5},
+    "colaboradora_porta":{"Sim": 17, "Não": 3},
+    "identificacao_adicional":{"Não": 3, "Sim": 17},
+    "reunioes_equipe":{"Sim": 20},
+    "rotatividade":{"Não": 2, "Sim": 18},
+    "apoio_ministerio":{"Sim": 20},
+    "drive":{"Sim": 18, "Não": 2},
+    "saudacao_porta":{"Sim": 20},
+    "inicio_rpc_frase":{"Sim": 20},
+    "ritual_rpc":{"Sim": 20},
+    "vigilancia_oracao":{"Sim": 20},
+    "veu":{"Sim": 19, "Não": 1},
+    "ajuda_compra":{"Sim": 19, "Não": 1},
+    "paredes_claras":{"Sim": 20},
+    "videos":{"Não": 20},
+    "ia":{"Não": 12, "Sim (atividades)": 8},
+    "datas_comemorativas":{"Não (só bíblicos)": 18, "Às vezes": 2},
+    "temas_igreja":{"Às vezes": 18, "Sim": 1, "Não": 1},
+    "orientacao_conduta":{"Sim": 20},
+    "treinamento_inclusao":{"Não": 4, "Sim": 16},
+    "prep_tea":{"Em processo": 8, "Não": 5, "Sim": 7},
+    "sinalizacao":{"Não": 7, "Sim": 12, "Em processo": 1},
+    "local_regulacao":{"Não": 17, "Em processo": 1, "Sim": 2},
+    "mat_pedagogicos":{"Não": 11, "Sim": 9},
+    "incentivo_respeito":{"Sempre": 19, "Às vezes": 1},
+    "identif_sobrecarga":{"Algumas irmãs": 11, "Sim": 4, "Não": 5},
+    "irmas_suporte":{"Não sabia": 5, "Sim": 13, "Não": 2},
+    "def_auditiva":{"Sim": 2, "Não": 16, "Parcialmente": 2},
+    "resp_legal":{"Às vezes": 4, "Não": 15, "Sim": 1},
+    "revisao_historias":{"Coord. + Ministério": 15, "Só ministério": 3, "Só coordenadoras": 2},
+    "atividades_faixa":{"Sempre": 19, "Às vezes": 1},
+    "encontros_preparo":{"Não": 16, "Às vezes": 4},
+    "seguranca":{"Luz de emergência": 10, "Janelas c/ tela/grade": 10, "Extintor": 8, "Tomadas tamponadas": 3, "Portas de vidro c/ faixas": 6},
+    "espaco_possui":{"Ar condicionado": 18, "Placa JC": 18, "Ventilador": 7, "Câmera": 1, "Tatame": 1},
+    "estrategias_especiais":{"Dinâmicas": 10, "Outras": 1, "↑ ativ. escritas": 14, "↑ colaboradoras": 10},
+    "materiais":{"Papelaria": 20, "Massinha": 7, "Sementes/grãos": 1},
+    "escadas":{"c/ corrimão": 10, "c/ piso antiderrap.": 4, "Sem escadas": 5, "S/ segurança": 5, "c/ fita antiderrap.": 3},
+    "qtd_colaboradoras":{"2 a 3": 13, "4 a 5": 4, "1 a 2": 3},
+    "qtd_criancas":{"8 a 15": 13, "20 a 30": 1, "5 a 8": 3, "15 a 20": 3},
+    "qtd_coordenadoras":{"1 coordenadora": 19, "Acima de 4": 1},
+    "total_colaboradoras":{"15 a 20": 5, "30 a 35": 2, "5 a 10": 2, "10 a 15": 7, "2 a 5": 2, "20 a 25": 2},
+    "dia_culto":{"Domingo Noite": 17, "Sábado Noite": 2, "6° feira - Noite": 1},
+    "recursos_graficos":{"Outros": 6, "Personagens contemp.": 14},
+    "banner":{"Só Pai Nosso": 2, "Não": 15, "Só combinados": 3},
+    "cronograma":{"Bimestral/Trimestral": 1, "Por grupo": 16, "Outro": 1, "Mensal": 1, "Semestral/Anual": 1},
+    "espaco_dividido":{"Sim": 12, "Não": 8},
+    "atipicas":{"1": 6, "3 ou mais": 2, "2": 6, "Nenhuma": 6},
+    "freq_atipicas":{"Raramente": 8, "Às vezes": 7, "Sempre": 5}
+  },
+  "Maca\u00e9": {
+    "total":8,
+    "igrejas":8,
+    "brigadista":{"Não": 8},
+    "banheiro":{"Sim": 4, "Não": 2, "Usa banheiro da igreja": 2},
+    "colaboradora_porta":{"Não": 4, "Sim": 4},
+    "identificacao_adicional":{"Sim": 6, "Não": 2},
+    "reunioes_equipe":{"Não": 4, "Sim": 4},
+    "rotatividade":{"Sim": 7, "Somente quando precisamos fazer trocas,pois somos um número  pequeno.": 1},
+    "apoio_ministerio":{"Sim": 6, "Quando precisamos,conversamos  com o ministério.": 1, "Não": 1},
+    "drive":{"Não": 4, "Sim": 4},
+    "saudacao_porta":{"Sim": 8},
+    "inicio_rpc_frase":{"Sim": 8},
+    "ritual_rpc":{"Sim": 8},
+    "vigilancia_oracao":{"Sim": 8},
+    "veu":{"Sim": 8},
+    "ajuda_compra":{"Não": 6, "Sim": 2},
+    "paredes_claras":{"Sim": 6, "Temos alguns  materias expostos.": 1, "Não": 1},
+    "videos":{"Não": 8},
+    "ia":{"Sim (atividades)": 3, "Não": 4, "Sim (roteiros)": 1},
+    "datas_comemorativas":{"Às vezes": 3, "Não (só bíblicos)": 5},
+    "temas_igreja":{"Às vezes": 6, "Sempre": 1, "Sim": 1},
+    "orientacao_conduta":{"Sim": 6, "Não": 2},
+    "treinamento_inclusao":{"Sim": 6, "Não": 2},
+    "prep_tea":{"Em processo": 4, "Não": 3, "Sim": 1},
+    "sinalizacao":{"Sim": 3, "Não": 5},
+    "local_regulacao":{"Sim": 3, "Não": 5},
+    "mat_pedagogicos":{"Sim": 5, "Não": 3},
+    "incentivo_respeito":{"Sempre": 7, "Às vezes": 1},
+    "identif_sobrecarga":{"Sim": 5, "Algumas irmãs": 2, "Não": 1},
+    "irmas_suporte":{"Sim": 4, "Não": 4},
+    "def_auditiva":{"Sim": 1, "Não": 6, "Parcialmente": 1},
+    "resp_legal":{"Não": 7, "Às vezes": 1},
+    "revisao_historias":{"Coord. + Ministério": 2, "Não": 1, "Só coordenadoras": 3, "Só ministério": 2},
+    "atividades_faixa":{"Sempre": 8},
+    "encontros_preparo":{"Às vezes": 2, "Não": 6},
+    "seguranca":{"Janelas c/ tela/grade": 4, "Extintor": 3, "Luz de emergência": 6, "Tomadas tamponadas": 2},
+    "espaco_possui":{"Ar condicionado": 4, "Tatame": 4, "Placa JC": 3, "Ventilador": 5, "Câmera": 1},
+    "estrategias_especiais":{"↑ colaboradoras": 4, "Dinâmicas": 5, "↑ ativ. escritas": 2, "Outras": 1},
+    "materiais":{"Papelaria": 8, "Massinha": 1},
+    "escadas":{"c/ corrimão": 5, "c/ piso antiderrap.": 2, "Sem escadas": 2, "S/ segurança": 1},
+    "qtd_colaboradoras":{"2 a 3": 3, "1 a 2": 4, "6 ou mais": 1},
+    "qtd_criancas":{"5 a 8": 3, "8 a 15": 4, "15 a 20": 1},
+    "qtd_coordenadoras":{"2  coordenadoras gerais": 5, "1 coordenadora": 2, "Acima de 4": 1},
+    "total_colaboradoras":{"5 a 10": 3, "2 a 5": 4, "20 a 25": 1},
+    "dia_culto":{"Sábado Noite": 5, "Domingo Noite": 2, "Domingo Manhã": 1},
+    "recursos_graficos":{"Outros": 6, "Personagens contemp.": 2},
+    "banner":{"Sim, os dois": 1, "Não": 4, "Só combinados": 2, "Só Pai Nosso": 1},
+    "cronograma":{"Mensal": 2, "Por grupo": 4, "Semestral/Anual": 1, "Bimestral/Trimestral": 1},
+    "espaco_dividido":{"Sim": 6, "Não": 2},
+    "atipicas":{"2": 5, "1": 1, "3 ou mais": 1, "Nenhuma": 1},
+    "freq_atipicas":{"Sempre": 2, "Às vezes": 5, "Raramente": 1}
+  },
+  "Nova Igua\u00e7u": {
+    "total":7,
+    "igrejas":7,
+    "brigadista":{"Sim": 3, "Não": 4},
+    "banheiro":{"Usa banheiro da igreja": 1, "Sim": 5, "Não": 1},
+    "colaboradora_porta":{"Sim": 4, "Não": 3},
+    "identificacao_adicional":{"Sim": 6, "Não": 1},
+    "reunioes_equipe":{"Não": 5, "Sim": 2},
+    "rotatividade":{"Sim": 4, "Elas preferem os dias fixos": 1, "Não": 2},
+    "apoio_ministerio":{"Sim": 7},
+    "drive":{"Sim": 5, "Não": 2},
+    "saudacao_porta":{"Sim": 7},
+    "inicio_rpc_frase":{"Sim": 7},
+    "ritual_rpc":{"Sim": 7},
+    "vigilancia_oracao":{"Sim": 7},
+    "veu":{"Sim": 7},
+    "ajuda_compra":{"Sim": 2, "Não": 5},
+    "paredes_claras":{"Sim": 7},
+    "videos":{"Não": 7},
+    "ia":{"Sim (atividades)": 3, "Não": 4},
+    "datas_comemorativas":{"Não (só bíblicos)": 6, "Às vezes": 1},
+    "temas_igreja":{"Às vezes": 7},
+    "orientacao_conduta":{"Sim": 7},
+    "treinamento_inclusao":{"Sim": 6, "Não": 1},
+    "prep_tea":{"Em processo": 3, "Sim": 3, "Não": 1},
+    "sinalizacao":{"Sim": 4, "Em processo": 3},
+    "local_regulacao":{"Não": 4, "Sim": 3},
+    "mat_pedagogicos":{"Não": 2, "Sim": 5},
+    "incentivo_respeito":{"Sempre": 6, "Às vezes": 1},
+    "identif_sobrecarga":{"Algumas irmãs": 5, "Sim": 2},
+    "irmas_suporte":{"Não sabia": 1, "Sim": 3, "Não": 3},
+    "def_auditiva":{"Parcialmente": 5, "Não": 2},
+    "resp_legal":{"Não": 5, "Às vezes": 2},
+    "revisao_historias":{"Coord. + Ministério": 6, "Não": 1},
+    "atividades_faixa":{"Sempre": 6, "Às vezes": 1},
+    "encontros_preparo":{"Às vezes": 3, "Não": 4},
+    "seguranca":{"Extintor": 5, "Janelas c/ tela/grade": 3, "Tomadas tamponadas": 4, "Luz de emergência": 1},
+    "espaco_possui":{"Ar condicionado": 7, "Placa JC": 5, "Ventilador": 2, "Tatame": 3, "Câmera": 1},
+    "estrategias_especiais":{"↑ colaboradoras": 5, "↑ ativ. escritas": 4, "Dinâmicas": 6, "Outras": 1},
+    "materiais":{"Papelaria": 7, "Massinha": 2},
+    "escadas":{"Sem escadas": 4, "c/ corrimão": 3, "c/ fita antiderrap.": 2},
+    "qtd_colaboradoras":{"1 a 2": 2, "4 a 5": 2, "2 a 3": 3},
+    "qtd_criancas":{"8 a 15": 3, "15 a 20": 1, "5 a 8": 3},
+    "qtd_coordenadoras":{"Acima de 4": 1, "1 coordenadora": 5, "2  coordenadoras gerais": 1},
+    "total_colaboradoras":{"5 a 10": 4, "10 a 15": 1, "20 a 25": 1, "2 a 5": 1},
+    "dia_culto":{"Sábado Noite": 4, "Domingo Noite": 3},
+    "recursos_graficos":{"Outros": 6, "Personagens contemp.": 1},
+    "banner":{"Sim, os dois": 1, "Não": 5, "Só Pai Nosso": 1},
+    "cronograma":{"Por grupo": 6, "Outro": 1},
+    "espaco_dividido":{"Não": 3, "Sim": 4},
+    "atipicas":{"Nenhuma": 2, "3 ou mais": 3, "1": 1, "2": 1},
+    "freq_atipicas":{"Raramente": 2, "Sempre": 5}
+  },
+  "Itaperuna": {
+    "total":8,
+    "igrejas":8,
+    "brigadista":{"Não": 6, "Às vezes": 1, "Sim": 1},
+    "banheiro":{"Sim": 3, "Usa banheiro da igreja": 4, "Não": 1},
+    "colaboradora_porta":{"Sim": 7, "Não": 1},
+    "identificacao_adicional":{"Sim": 5, "Não": 3},
+    "reunioes_equipe":{"Sim": 5, "Não": 3},
+    "rotatividade":{"Sim": 8},
+    "apoio_ministerio":{"Sim": 7, "Não": 1},
+    "drive":{"Sim": 5, "Não": 3},
+    "saudacao_porta":{"Sim": 8},
+    "inicio_rpc_frase":{"Sim": 8},
+    "ritual_rpc":{"Sim": 8},
+    "vigilancia_oracao":{"Sim": 8},
+    "veu":{"Sim": 8},
+    "ajuda_compra":{"Sim": 6, "Não": 2},
+    "paredes_claras":{"Não": 1, "Sim": 7},
+    "videos":{"Não": 8},
+    "ia":{"Não": 7, "Sim (roteiros)": 1},
+    "datas_comemorativas":{"Não (só bíblicos)": 7, "Às vezes": 1},
+    "temas_igreja":{"Às vezes": 6, "Não": 1, "Sim": 1},
+    "orientacao_conduta":{"Sim": 8},
+    "treinamento_inclusao":{"Sim": 5, "Não": 3},
+    "prep_tea":{"Em processo": 5, "Não": 2, "Sim": 1},
+    "sinalizacao":{"Sim": 3, "Não": 1, "Em processo": 4},
+    "local_regulacao":{"Não": 5, "Sim": 2, "Em processo": 1},
+    "mat_pedagogicos":{"Não": 6, "Sim": 2},
+    "incentivo_respeito":{"Sempre": 7, "Às vezes": 1},
+    "identif_sobrecarga":{"Algumas irmãs": 7, "Não": 1},
+    "irmas_suporte":{"Sim": 7, "Não": 1},
+    "def_auditiva":{"Não": 4, "Sim": 1, "Parcialmente": 3},
+    "resp_legal":{"Não": 6, "Sim": 2},
+    "revisao_historias":{"Só coordenadoras": 6, "Coord. + Ministério": 2},
+    "atividades_faixa":{"Sempre": 8},
+    "encontros_preparo":{"Não": 6, "Às vezes": 2},
+    "seguranca":{"Extintor": 4, "Luz de emergência": 6, "Tomadas tamponadas": 2, "Portas de vidro c/ faixas": 4, "Janelas c/ tela/grade": 1},
+    "espaco_possui":{"Ar condicionado": 5, "Câmera": 2, "Placa JC": 4, "Ventilador": 3},
+    "estrategias_especiais":{"↑ colaboradoras": 7, "↑ ativ. escritas": 5, "Dinâmicas": 4},
+    "materiais":{"Papelaria": 8, "Massinha": 7, "Sementes/grãos": 3},
+    "escadas":{"c/ corrimão": 3, "c/ fita antiderrap.": 2, "Sem escadas": 4, "S/ segurança": 1},
+    "qtd_colaboradoras":{"4 a 5": 2, "2 a 3": 4, "1 a 2": 2},
+    "qtd_criancas":{"20 a 30": 2, "15 a 20": 1, "8 a 15": 4, "5 a 8": 1},
+    "qtd_coordenadoras":{"2  coordenadoras gerais": 1, "1 coordenadora": 7},
+    "total_colaboradoras":{"20 a 25": 1, "5 a 10": 4, "2 a 5": 1, "10 a 15": 1, "30 a 35": 1},
+    "dia_culto":{"Domingo Noite": 7, "Sábado Noite": 1},
+    "recursos_graficos":{"Personagens contemp.": 4, "Outros": 4},
+    "banner":{"Só combinados": 1, "Não": 5, "Só Pai Nosso": 1, "Sim, os dois": 1},
+    "cronograma":{"Por grupo": 3, "Mensal": 3, "Outro": 2},
+    "espaco_dividido":{"Sim": 3, "Não": 5},
+    "atipicas":{"1": 3, "Nenhuma": 2, "2": 2, "3 ou mais": 1},
+    "freq_atipicas":{"Sempre": 4, "Às vezes": 3, "Raramente": 1}
+  },
+  "S\u00e3o Gon\u00e7alo": {
+    "total":6,
+    "igrejas":6,
+    "brigadista":{"Não": 4, "Sim": 2},
+    "banheiro":{"Sim": 4, "Não": 2},
+    "colaboradora_porta":{"Sim": 6},
+    "identificacao_adicional":{"Sim": 6},
+    "reunioes_equipe":{"Sim": 4, "Não": 2},
+    "rotatividade":{"Não": 1, "Sim": 5},
+    "apoio_ministerio":{"Sim": 4, "Às vezes": 1, "Não": 1},
+    "drive":{"Sim": 6},
+    "saudacao_porta":{"Sim": 5, "Errado": 1},
+    "inicio_rpc_frase":{"Sim": 6},
+    "ritual_rpc":{"Sim": 6},
+    "vigilancia_oracao":{"Sim": 6},
+    "veu":{"Sim": 6},
+    "ajuda_compra":{"Não": 3, "Sim": 3},
+    "paredes_claras":{"Sim": 5, "As paredes são claras, mas os materiais ficam em uma estante": 1},
+    "videos":{"Não": 6},
+    "ia":{"Não": 1, "Sim (atividades)": 4, "Sim (roteiros)": 1},
+    "datas_comemorativas":{"Às vezes": 1, "Não (só bíblicos)": 5},
+    "temas_igreja":{"Às vezes": 6},
+    "orientacao_conduta":{"Sim": 5, "Não": 1},
+    "treinamento_inclusao":{"Não": 3, "Sim": 3},
+    "prep_tea":{"Em processo": 1, "Sim": 2, "Não": 3},
+    "sinalizacao":{"Não": 4, "Sim": 2},
+    "local_regulacao":{"Não": 6},
+    "mat_pedagogicos":{"Não": 4, "Sim": 2},
+    "incentivo_respeito":{"Sempre": 6},
+    "identif_sobrecarga":{"Algumas irmãs": 4, "Sim": 1, "Não": 1},
+    "irmas_suporte":{"Não sabia": 2, "Sim": 3, "Não": 1},
+    "def_auditiva":{"Não": 5, "Sim": 1},
+    "resp_legal":{"Não": 3, "Sim": 2, "Às vezes": 1},
+    "revisao_historias":{"Só coordenadoras": 4, "Coord. + Ministério": 2},
+    "atividades_faixa":{"Sempre": 6},
+    "encontros_preparo":{"Não": 4, "Sempre": 1, "Às vezes": 1},
+    "seguranca":{"Luz de emergência": 2, "Janelas c/ tela/grade": 2, "Extintor": 2, "Portas de vidro c/ faixas": 2},
+    "espaco_possui":{"Ar condicionado": 6, "Ventilador": 5, "Placa JC": 6, "Tatame": 2},
+    "estrategias_especiais":{"↑ colaboradoras": 4, "↑ ativ. escritas": 6, "Dinâmicas": 5},
+    "materiais":{"Papelaria": 6, "Sementes/grãos": 1, "Massinha": 3},
+    "escadas":{"Sem escadas": 3, "c/ corrimão": 3, "c/ fita antiderrap.": 2, "c/ piso antiderrap.": 1},
+    "qtd_colaboradoras":{"4 a 5": 5, "2 a 3": 1},
+    "qtd_criancas":{"15 a 20": 4, "8 a 15": 2},
+    "qtd_coordenadoras":{"2  coordenadoras gerais": 6},
+    "total_colaboradoras":{"10 a 15": 2, "5 a 10": 3, "20 a 25": 1},
+    "dia_culto":{"Domingo Noite": 5, "Sábado Noite": 1},
+    "recursos_graficos":{"Personagens contemp.": 5, "Outros": 1},
+    "banner":{"Só combinados": 4, "Sim, os dois": 2},
+    "cronograma":{"Por grupo": 1, "Bimestral/Trimestral": 2, "Mensal": 2, "Semestral/Anual": 1},
+    "espaco_dividido":{"Sim": 5, "Não": 1},
+    "atipicas":{"1": 2, "2": 2, "Nenhuma": 2},
+    "freq_atipicas":{"Sempre": 3, "Às vezes": 1, "Raramente": 2}
+  },
+  "Angra dos Reis": {
+    "total":4,
+    "igrejas":4,
+    "brigadista":{"Sim": 1, "Não": 3},
+    "banheiro":{"Sim": 4},
+    "colaboradora_porta":{"Sim": 4},
+    "identificacao_adicional":{"Sim": 4},
+    "reunioes_equipe":{"Sim": 4},
+    "rotatividade":{"Sim": 4},
+    "apoio_ministerio":{"Sim": 4},
+    "drive":{"Sim": 3, "Em processo": 1},
+    "saudacao_porta":{"Sim": 4},
+    "inicio_rpc_frase":{"Sim": 4},
+    "ritual_rpc":{"Sim": 4},
+    "vigilancia_oracao":{"Sim": 4},
+    "veu":{"Sim": 4},
+    "ajuda_compra":{"Sim": 4},
+    "paredes_claras":{"As paradas são claras e o que temos de informação colocada são as regras de convivência e o pai nosso": 1, "Não": 3},
+    "videos":{"Não": 4},
+    "ia":{"Não": 4},
+    "datas_comemorativas":{"Sim": 4},
+    "temas_igreja":{"Às vezes": 4},
+    "orientacao_conduta":{"Sim": 4},
+    "treinamento_inclusao":{"Não": 3, "Sim": 1},
+    "prep_tea":{"Em processo": 3, "Não": 1},
+    "sinalizacao":{"Em processo": 3, "Sim": 1},
+    "local_regulacao":{"Não": 4},
+    "mat_pedagogicos":{"Sim": 3, "Não": 1},
+    "incentivo_respeito":{"Sempre": 4},
+    "identif_sobrecarga":{"Algumas irmãs": 4},
+    "irmas_suporte":{"Não": 4},
+    "def_auditiva":{"Não": 4},
+    "resp_legal":{"Não": 4},
+    "revisao_historias":{"Coord. + Ministério": 1, "Só ministério": 3},
+    "atividades_faixa":{"Sempre": 4},
+    "encontros_preparo":{"Não": 3, "Sempre": 1},
+    "seguranca":{"Extintor": 3, "Luz de emergência": 1, "Tomadas tamponadas": 1, "Janelas c/ tela/grade": 1},
+    "espaco_possui":{"Ar condicionado": 4, "Tatame": 2, "Placa JC": 3, "Ventilador": 3},
+    "estrategias_especiais":{"↑ colaboradoras": 4},
+    "materiais":{"Papelaria": 4},
+    "escadas":{"Sem escadas": 2, "c/ corrimão": 1, "c/ piso antiderrap.": 1, "S/ segurança": 1},
+    "qtd_colaboradoras":{"2 a 3": 4},
+    "qtd_criancas":{"8 a 15": 4},
+    "qtd_coordenadoras":{"1 coordenadora": 4},
+    "total_colaboradoras":{"10 a 15": 1, "5 a 10": 2, "2 a 5": 1},
+    "dia_culto":{"Domingo Noite": 2, "Sábado Noite": 2},
+    "recursos_graficos":{"Outros": 4},
+    "banner":{"Sim, os dois": 2, "Não": 2},
+    "cronograma":{"Semestral/Anual": 3, "Por grupo": 1},
+    "espaco_dividido":{"Não": 2, "Sim": 2},
+    "atipicas":{"Nenhuma": 2, "1": 1, "2": 1},
+    "freq_atipicas":{"Raramente": 2, "Às vezes": 2}
+  }
+};
+
+// Dados adicionais: crianças atípicas
+(function addAtipicas(){
+  const atip={"São Gonçalo":{"1":2,"2":2,"Nenhuma":2},"Nova Friburgo":{"1":6,"3 ou mais":2,"2":6,"Nenhuma":6},"Duque de Caxias":{"1":12,"3 ou mais":10,"2":11,"Nenhuma":7},"Itaperuna":{"1":3,"Nenhuma":2,"2":2,"3 ou mais":1},"Macaé":{"2":5,"1":1,"3 ou mais":1,"Nenhuma":1},"Angra dos Reis":{"Nenhuma":2,"1":1,"2":1},"Nova Iguaçu":{"Nenhuma":2,"3 ou mais":3,"1":1,"2":1}};
+  const freq={"São Gonçalo":{"Sempre":3,"Às vezes":1,"Raramente":2},"Nova Friburgo":{"Raramente":8,"Às vezes":7,"Sempre":5},"Duque de Caxias":{"Às vezes":13,"Raramente":10,"Sempre":17},"Itaperuna":{"Sempre":4,"Às vezes":3,"Raramente":1},"Macaé":{"Sempre":2,"Às vezes":5,"Raramente":1},"Angra dos Reis":{"Raramente":2,"Às vezes":2},"Nova Iguaçu":{"Raramente":2,"Sempre":5}};
+  Object.keys(atip).forEach(r=>{ if(D[r]){ D[r].atipicas=atip[r]; D[r].freq_atipicas=freq[r]||{}; } });
+})();
+
+const REGIONS = Object.keys(D);
+(function buildGeral() {
+  const g = { total:0, igrejas:0 };
+  const fields = Object.keys(D[REGIONS[0]]).filter(k=>k!=='total'&&k!=='igrejas');
+  fields.forEach(f => g[f]={});
+  REGIONS.forEach(r => {
+    g.total += D[r].total; g.igrejas += D[r].igrejas;
+    fields.forEach(f => {
+      Object.entries(D[r][f]||{}).forEach(([k,v]) => { g[f][k]=(g[f][k]||0)+v; });
+    });
+  });
+  D['Geral'] = g;
+})();
+
+// ── SVG Chart Engine ──────────────────────────────────────────────────────
+const PAL = {
+  blue:  ['#2980b9','#3498db','#5dade2','#85c1e9','#aed6f1','#d6eaf8'],
+  green: ['#27ae60','#2ecc71','#58d68d','#82e0aa','#a9dfbf'],
+  red:   ['#c0392b','#e74c3c','#f1948a'],
+  orange:['#e67e22','#f39c12','#f8c471','#fde8c8'],
+  purple:['#8e44ad','#9b59b6','#c39bd3','#e8daef'],
+  mixed: ['#2980b9','#27ae60','#e67e22','#e74c3c','#8e44ad','#16a085','#f39c12','#2c3e50'],
+  sn:    ['#27ae60','#e74c3c','#f39c12','#95a5a6','#8e44ad'],
+};
+
+function sz(id){
+  const el=document.getElementById(id);
+  if(!el)return[300,200];
+  return[el.offsetWidth||300,el.offsetHeight||200];
+}
+
+function donut(id,labels,data,pal){
+  const el=document.getElementById(id);
+  if(!el)return;
+  const total=data.reduce((a,b)=>a+b,0);
+  if(!total){el.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#bbb;font-size:12px">Sem dados</div>';return;}
+  const[W,H]=sz(id);
+  const legW=Math.max(120,W*0.44);
+  const chartW=W-legW;
+  const cx=chartW/2,cy=H/2;
+  const r=Math.min(cx,cy)*0.82,ri=r*0.54;
+  let s=`<svg width="${W}" height="${H}" style="display:block;overflow:visible">`;
+  let a=-Math.PI/2;
+  data.forEach((v,i)=>{
+    if(!v)return;
+    const sw=(v/total)*Math.PI*2;
+    const a2=a+sw;
+    const[x1,y1]=[cx+r*Math.cos(a),cy+r*Math.sin(a)];
+    const[x2,y2]=[cx+r*Math.cos(a2),cy+r*Math.sin(a2)];
+    const[ix1,iy1]=[cx+ri*Math.cos(a),cy+ri*Math.sin(a)];
+    const[ix2,iy2]=[cx+ri*Math.cos(a2),cy+ri*Math.sin(a2)];
+    const lg=sw>Math.PI?1:0;
+    const col=pal[i%pal.length];
+    s+=`<path d="M${ix1},${iy1}L${x1},${y1}A${r},${r} 0 ${lg} 1 ${x2},${y2}L${ix2},${iy2}A${ri},${ri} 0 ${lg} 0 ${ix1},${iy1}Z" fill="${col}" stroke="#fff" stroke-width="2"/>`;
+    const pct=Math.round(v/total*100);
+    if(pct>=8&&sw>0.4){
+      const ma=a+sw/2,lr=(r+ri)/2;
+      s+=`<text x="${cx+lr*Math.cos(ma)}" y="${cy+lr*Math.sin(ma)}" text-anchor="middle" dominant-baseline="middle" fill="#fff" font-size="9" font-weight="bold">${pct}%</text>`;
+    }
+    a+=sw;
+  });
+  s+=`<text x="${cx}" y="${cy-6}" text-anchor="middle" fill="#1a3a5c" font-size="19" font-weight="700">${total}</text>`;
+  s+=`<text x="${cx}" y="${cy+9}" text-anchor="middle" fill="#999" font-size="8">total</text>`;
+  const lx=chartW+6;
+  const rowH=Math.min(19,(H-8)/Math.max(data.filter(v=>v>0).length,1));
+  const activeData=data.map((v,i)=>({v,i})).filter(e=>e.v>0);
+  const startY=(H-activeData.length*rowH)/2+rowH/2;
+  activeData.forEach(({v,i},j)=>{
+    const ly=startY+j*rowH;
+    const col=pal[i%pal.length];
+    const pct=Math.round(v/total*100);
+    s+=`<rect x="${lx}" y="${ly-5}" width="9" height="9" rx="2" fill="${col}"/>`;
+    const raw=labels[i]||'';
+    const lbl=raw.length>22?raw.slice(0,21)+'…':raw;
+    s+=`<text x="${lx+13}" y="${ly+2}" fill="#333" font-size="9">${lbl} <tspan font-weight="bold">${v} (${pct}%)</tspan></text>`;
+  });
+  s+='</svg>';
+  el.innerHTML=s;
+}
+
+function bar(id,labels,data,pal,horiz=false){
+  const el=document.getElementById(id);
+  if(!el)return;
+  if(!data.length){el.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#bbb;font-size:12px">Sem dados</div>';return;}
+  const maxV=Math.max(...data,1);
+  const[W,H]=sz(id);
+  let s;
+  if(horiz){
+    const pL=Math.min(145,W*0.44),pR=38,pT=6,pB=6;
+    const cW=W-pL-pR,cH=H-pT-pB;
+    const n=labels.length,rowH=cH/n,bH=Math.min(22,rowH*0.62);
+    s=`<svg width="${W}" height="${H}" style="display:block">`;
+    [0.25,0.5,0.75,1].forEach(p=>{
+      const x=pL+cW*p;
+      s+=`<line x1="${x}" y1="${pT}" x2="${x}" y2="${H-pB}" stroke="#f0f0f0" stroke-width="1"/>`;
+    });
+    labels.forEach((lbl,i)=>{
+      const y=pT+i*rowH+(rowH-bH)/2;
+      const bw=(data[i]/maxV)*cW;
+      const col=Array.isArray(pal)?pal[i%pal.length]:pal;
+      s+=`<rect x="${pL}" y="${y}" width="${Math.max(bw,1)}" height="${bH}" rx="3" fill="${col}"/>`;
+      const sl=(lbl||'').length>21?(lbl||'').slice(0,20)+'…':(lbl||'');
+      s+=`<text x="${pL-5}" y="${y+bH/2}" text-anchor="end" dominant-baseline="middle" fill="#444" font-size="8.5">${sl}</text>`;
+      s+=`<text x="${pL+bw+5}" y="${y+bH/2}" dominant-baseline="middle" fill="#222" font-size="9" font-weight="bold">${data[i]}</text>`;
+    });
+  } else {
+    const pL=28,pR=8,pT=18,pB=46;
+    const cW=W-pL-pR,cH=H-pT-pB;
+    const n=labels.length,colW=cW/n,bW=Math.min(34,colW*0.65);
+    s=`<svg width="${W}" height="${H}" style="display:block">`;
+    [0,0.25,0.5,0.75,1].forEach(p=>{
+      const y=pT+cH*(1-p);
+      s+=`<line x1="${pL}" y1="${y}" x2="${W-pR}" y2="${y}" stroke="${p===0?'#ccc':'#f0f0f0'}" stroke-width="1"/>`;
+      if(p>0)s+=`<text x="${pL-3}" y="${y}" text-anchor="end" dominant-baseline="middle" fill="#bbb" font-size="7.5">${Math.round(maxV*p)}</text>`;
+    });
+    labels.forEach((lbl,i)=>{
+      const cx2=pL+i*colW+colW/2;
+      const x=cx2-bW/2;
+      const bh=(data[i]/maxV)*cH;
+      const y=pT+cH-bh;
+      const col=Array.isArray(pal)?pal[i%pal.length]:pal;
+      s+=`<rect x="${x}" y="${y}" width="${bW}" height="${Math.max(bh,1)}" rx="3" fill="${col}"/>`;
+      s+=`<text x="${cx2}" y="${y-3}" text-anchor="middle" fill="#222" font-size="8.5" font-weight="bold">${data[i]}</text>`;
+      const raw=(lbl||'');
+      const words=raw.split(' ');
+      if(words.length===1){
+        s+=`<text x="${cx2}" y="${H-pB+13}" text-anchor="middle" fill="#555" font-size="8">${raw.length>14?raw.slice(0,13)+'…':raw}</text>`;
+      } else {
+        const mid=Math.ceil(words.length/2);
+        const l1=words.slice(0,mid).join(' '),l2=words.slice(mid).join(' ');
+        s+=`<text x="${cx2}" y="${H-pB+11}" text-anchor="middle" fill="#555" font-size="8">${l1.length>14?l1.slice(0,13)+'…':l1}</text>`;
+        s+=`<text x="${cx2}" y="${H-pB+21}" text-anchor="middle" fill="#555" font-size="8">${l2.length>14?l2.slice(0,13)+'…':l2}</text>`;
+      }
+    });
+  }
+  s+='</svg>';
+  el.innerHTML=s;
+}
+
+function obj2arr(o){
+  const e=Object.entries(o||{}).sort((a,b)=>b[1]-a[1]);
+  return{labels:e.map(x=>x[0]),data:e.map(x=>x[1])};
+}
+
+function kpipct(d,field,val){
+  const total=d.total||1;
+  const got=Object.entries(d[field]||{})
+    .filter(([k])=>k.toLowerCase()===val.toLowerCase())
+    .reduce((a,[,v])=>a+v,0);
+  return Math.round(got/total*100)+'%';
+}
+
+function render(region){
+  const d=D[region]||D['Geral'];
+  document.getElementById('k-total').textContent=d.total;
+  document.getElementById('k-igrejas').textContent=d.igrejas;
+  document.getElementById('k-veu').textContent=kpipct(d,'veu','Sim');
+  document.getElementById('k-porta').textContent=kpipct(d,'colaboradora_porta','Sim');
+  document.getElementById('k-brigadista').textContent=kpipct(d,'brigadista','Sim');
+  document.getElementById('k-reunioes').textContent=kpipct(d,'reunioes_equipe','Sim');
+
+  const secReg=document.getElementById('sec-reg');
+  if(secReg)secReg.style.display=(region==='Geral')?'':'none';
+  if(region==='Geral'){
+    bar('ch-reg-bar',REGIONS,REGIONS.map(r=>D[r].total),PAL.mixed,true);
+    donut('ch-reg-pie',REGIONS,REGIONS.map(r=>D[r].total),PAL.mixed);
+  }
+
+  const c=field=>obj2arr(d[field]);
+  const{labels:l1,data:d1}=c('dia_culto'); donut('ch-dia',l1,d1,PAL.blue);
+  const{labels:l2,data:d2}=c('qtd_criancas'); bar('ch-criancas',l2,d2,PAL.green);
+  const{labels:l3,data:d3}=c('qtd_colaboradoras'); bar('ch-colab',l3,d3,PAL.orange);
+  const{labels:l4,data:d4}=c('brigadista'); donut('ch-brigadista',l4,d4,PAL.sn);
+  const{labels:l5,data:d5}=c('qtd_coordenadoras'); bar('ch-coord',l5,d5,PAL.purple);
+  const{labels:l6,data:d6}=c('total_colaboradoras'); bar('ch-tot-colab',l6,d6,PAL.blue);
+  const{labels:l7,data:d7}=c('estrategias_especiais'); bar('ch-estrat',l7,d7,PAL.mixed,true);
+
+  const{labels:l8,data:d8}=c('colaboradora_porta'); donut('ch-porta',l8,d8,PAL.sn);
+  const{labels:l9,data:d9}=c('identificacao_adicional'); donut('ch-identif',l9,d9,PAL.sn);
+  const{labels:l10,data:d10}=c('banheiro'); donut('ch-banheiro',l10,d10,PAL.blue);
+  const{labels:l11,data:d11}=c('escadas'); bar('ch-escadas',l11,d11,PAL.orange,true);
+  const{labels:l12,data:d12}=c('seguranca'); bar('ch-seguranca',l12,d12,PAL.red,true);
+  const{labels:l13,data:d13}=c('espaco_possui'); bar('ch-espaco',l13,d13,PAL.mixed,true);
+
+  const{labels:l14,data:d14}=c('saudacao_porta'); donut('ch-saudacao',l14,d14,PAL.sn);
+  const{labels:l15,data:d15}=c('inicio_rpc_frase'); donut('ch-abertura',l15,d15,PAL.sn);
+  const{labels:l16,data:d16}=c('ritual_rpc'); donut('ch-ritual',l16,d16,PAL.sn);
+  const{labels:l17,data:d17}=c('vigilancia_oracao'); donut('ch-vigilancia',l17,d17,PAL.sn);
+  const{labels:l18,data:d18}=c('veu'); donut('ch-veu',l18,d18,PAL.sn);
+  const{labels:l19,data:d19}=c('banner'); donut('ch-banner',l19,d19,PAL.blue);
+
+  const{labels:l20,data:d20}=c('reunioes_equipe'); donut('ch-reunioes',l20,d20,PAL.sn);
+  const{labels:l21,data:d21}=c('rotatividade'); donut('ch-rotativ',l21,d21,PAL.sn);
+  const{labels:l22,data:d22}=c('apoio_ministerio'); donut('ch-minist',l22,d22,PAL.sn);
+  const{labels:l23,data:d23}=c('drive'); donut('ch-drive',l23,d23,PAL.sn);
+  const{labels:l24,data:d24}=c('cronograma'); bar('ch-cronograma',l24,d24,PAL.blue);
+  const{labels:l25,data:d25}=c('revisao_historias'); bar('ch-revisao',l25,d25,PAL.purple,true);
+
+  const{labels:l26,data:d26}=c('ajuda_compra'); donut('ch-compra',l26,d26,PAL.sn);
+  const{labels:l27,data:d27}=c('recursos_graficos'); bar('ch-graficos',l27,d27,PAL.mixed,true);
+  const{labels:l28,data:d28}=c('videos'); donut('ch-videos',l28,d28,PAL.sn);
+  const{labels:l29,data:d29}=c('ia'); donut('ch-ia',l29,d29,PAL.purple);
+  const{labels:l30,data:d30}=c('materiais'); bar('ch-materiais',l30,d30,PAL.green,true);
+  const{labels:l31,data:d31}=c('datas_comemorativas'); donut('ch-datas',l31,d31,PAL.orange);
+  const{labels:l32,data:d32}=c('temas_igreja'); donut('ch-temas-igreja',l32,d32,PAL.blue);
+  const{labels:l33,data:d33}=c('orientacao_conduta'); donut('ch-conduta',l33,d33,PAL.sn);
+
+  const{labels:l34,data:d34}=c('treinamento_inclusao'); donut('ch-trein',l34,d34,PAL.sn);
+  const{labels:l35,data:d35}=c('prep_tea'); donut('ch-tea',l35,d35,PAL.mixed);
+  const{labels:l36,data:d36}=c('sinalizacao'); donut('ch-sinal',l36,d36,PAL.sn);
+  const{labels:l37,data:d37}=c('mat_pedagogicos'); donut('ch-matped',l37,d37,PAL.blue);
+  const{labels:l38,data:d38}=c('incentivo_respeito'); donut('ch-respeito',l38,d38,PAL.green);
+  const{labels:l39,data:d39}=c('identif_sobrecarga'); donut('ch-sobrecarga',l39,d39,PAL.orange);
+  const{labels:l40,data:d40}=c('irmas_suporte'); donut('ch-suporte',l40,d40,PAL.mixed);
+  const{labels:l41,data:d41}=c('def_auditiva'); donut('ch-auditiva',l41,d41,PAL.sn);
+  const{labels:l42,data:d42}=c('paredes_claras'); donut('ch-paredes',l42,d42,PAL.sn);
+  const{labels:l43,data:d43}=c('encontros_preparo'); donut('ch-encontros',l43,d43,PAL.orange);
+  const{labels:l44,data:d44}=c('local_regulacao'); donut('ch-regulacao',l44,d44,PAL.sn);
+  const{labels:l45,data:d45}=c('resp_legal'); donut('ch-resp-legal',l45,d45,PAL.sn);
+  const{labels:l46,data:d46}=c('atividades_faixa'); donut('ch-faixa',l46,d46,PAL.sn);
+  const{labels:l47,data:d47}=c('espaco_dividido'); donut('ch-espaco-div',l47,d47,PAL.sn);
+  const{labels:l48,data:d48}=c('atipicas'); if(d48.length)bar('ch-atipicas',l48,d48,PAL.blue);
+  const{labels:l49,data:d49}=c('freq_atipicas'); if(d49.length)donut('ch-freq-atip',l49,d49,PAL.green);
+}
+
+document.querySelectorAll('.tab').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    render(btn.dataset.r);
+  });
+});
+
+setTimeout(()=>render('Geral'),80);
+</script>
+</body>
+</html>
